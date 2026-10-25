@@ -1,2 +1,55 @@
-# fuel-signal
-미국 가솔린·경유 가격과 원가·수급·뉴스를 매일 갱신하는 한국어 대시보드
+# Fuel Signal
+
+미국 전국 가솔린·경유 가격과 원가·수급·뉴스를 함께 보는 한국어 대시보드입니다.
+
+## 데이터와 해석
+
+- AAA: 전국 Regular 가솔린·Diesel 평균, 전일·1주·1개월·1년 비교.
+- EIA: 주간 소매가격 이력, WTI·브렌트 현물, 뉴욕항 제품 현물, 재고, 정유시설 가동률, 제품공급량.
+- AAA / EIA 뉴스: 원문 제목, 날짜, 출처 링크. 가격 변동의 확정 원인을 추정하지 않습니다.
+- 크랙 스프레드 = 제품 현물 − 원유/42. 정제비용을 차감한 순이익이 아니며 실제 구매원가와 다를 수 있습니다.
+- 출처마다 발표 주기와 지역이 다릅니다. 관측일과 수집 시각을 구분해 표시합니다.
+
+## 매일 자동 갱신
+
+`.github/workflows/daily.yml`이 매일 00:17 UTC(한국 시간 오전 9:17)에 실행됩니다.
+실행 순서는 자료 검증 → 출처 수집 → 사이트 생성 → 관측 이력 저장 → Pages 배포입니다.
+PC나 브라우저를 켜 둘 필요가 없습니다. 정시 실행은 보장되지 않으며 GitHub의 작업 대기열에 따라 지연될 수 있습니다.
+
+출처 일부가 실패하면 해당 출처의 마지막 정상값을 유지합니다. 전체 실패 시 기존 가격과 마지막 정상 수집 시각을 유지하고 실패 상태를 표시합니다. 실패 상태도 게시한 다음 실행을 실패로 표시하므로 Actions에서 확인할 수 있습니다. 알림 수신 여부는 계정의 Actions 알림 설정에 따릅니다.
+
+`최신 자료 보기`는 이미 게시된 자료를 다시 읽습니다. 방문자가 외부 데이터 수집이나 저장소 수정을 실행할 수 없습니다. 열린 화면도 15분마다, 다시 활성화할 때 갱신된 파일을 확인합니다.
+
+## 배포 설정
+
+1. 공개 GitHub 저장소의 기본 브랜치를 `main`으로 사용합니다.
+2. Settings → Pages → Build and deployment → Source를 **GitHub Actions**로 설정합니다.
+3. Actions → **Daily fuel update and publish** → **Run workflow**로 첫 실행을 확인합니다.
+4. 배포 결과의 Pages 주소로 접속합니다.
+
+공개 저장소의 표준 Ubuntu 실행 환경을 사용합니다. 별도 유료 서버, 도메인, API 키는 필요하지 않습니다. 빌드 결과 보관 기간은 1일입니다. 무료 조건과 서비스 제한은 GitHub 정책을 따릅니다.
+
+공개 저장소는 60일간 활동이 없으면 예약 실행이 비활성화될 수 있습니다. 정상 실행은 실제 관측값과 수집 상태를 기록합니다. 장기간 실패하거나 중지한 뒤에는 Actions에서 예약 실행 상태를 확인하고 필요하면 다시 활성화하세요.
+
+## 로컬 실행과 다른 서비스로 이전
+
+Node.js 22 이상에서 실행합니다.
+
+```sh
+npm ci
+npm test
+npm run update-data
+npm run build
+npm run preview
+```
+
+`data/market.json`에 가격 이력과 수집 상태가 보관됩니다. `dist/`는 상대 경로로 구성된 일반 HTML/CSS/JS/JSON 파일이므로 다른 정적 호스팅으로 이전할 수 있습니다. 데이터 수집은 `npm run update-data`를 하루 한 번 실행하고 다시 빌드하면 됩니다.
+
+## 공식 자료
+
+- https://gasprices.aaa.com/
+- https://www.eia.gov/petroleum/
+- https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages
+- https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule
+
+데이터의 권리는 각 원출처에 있으며 사이트에 원문 링크를 제공합니다.

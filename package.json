@@ -1,0 +1,19 @@
+{
+  "name": "fuel-signal",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22.13.0" },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "update-data": "node scripts/update-data.mjs",
+    "test": "node scripts/check-market.mjs && node --test scripts/check-refresh.mjs",
+    "preview": "node scripts/preview.mjs"
+  },
+  "dependencies": {
+    "lucide-react": "1.31.0",
+    "react": "19.2.6",
+    "react-dom": "19.2.6"
+  },
+  "devDependencies": { "esbuild": "0.28.0" }
+}
