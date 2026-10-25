@@ -7,7 +7,7 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "update-data": "node scripts/update-data.mjs",
-    "test": "node scripts/check-market.mjs && node --test scripts/check-refresh.mjs scripts/check-trends.mjs",
+    "test": "node scripts/check-market.mjs && node --test scripts/check-refresh.mjs scripts/check-trends.mjs scripts/check-brief.mjs",
     "preview": "node scripts/preview.mjs"
   },
   "dependencies": {

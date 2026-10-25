@@ -2,6 +2,7 @@ import {useMemo, useState} from 'react';
 import {Download, Info} from 'lucide-react';
 import {crackHistory, oilHistory, lastYear, pastObservation, historyCsv} from '../lib/market-trends.mjs';
 import {pct} from '../lib/market.mjs';
+import {CrackGuide} from './daily-brief';
 
 type Row = {date: string; [key: string]: any};
 type Line = {id: string; name: string; color: string};
@@ -72,7 +73,8 @@ export default function MarketTrends({data, benchmark, onBenchmarkChange}: {data
       <div className="history-stats">{CRACKS.map(l=>{const week=crackLast&&crackWeek?(crackLast[l.id]-crackWeek[l.id])/factor:null;const year=crackLast&&crackYear?(crackLast[l.id]-crackYear[l.id])/factor:null;return <div key={l.id}><span><i style={{background:l.color}}/>{l.name}{l.id!=='composite'&&' 1:1'}</span><b>{fmt(crackLast?crackLast[l.id]/factor:null,digits)}<small>{displayUnit}</small></b><p>1주 전 대비 <strong className={week>0?'up':week<0?'down':''}>{signed(week,digits)}</strong> · 1년 전 <strong className={year>0?'up':year<0?'down':''}>{signed(year,digits)}</strong> {displayUnit}</p></div>})}</div>
       <HistoryChart key={benchmark+unit} rows={crackRows} lines={CRACKS} label="크랙 스프레드 최근 1년 차트" unit={displayUnit} zero/>
       <p className="history-note">{benchmarkLabel} + 뉴욕항 가솔린·초저유황 경유 현물. 세 자료가 모두 있는 날짜만 계산합니다. 기준일 {day(crackLast?.date)} · 1주 전 비교 {day(crackWeek?.date)} · 1년 전 비교 {day(crackYear?.date)}. 소매가격 발표를 기다리지 않아 아래 원가 흐름과 기준일이 다를 수 있습니다.</p>
-      <details className="spread-method"><summary>크랙 스프레드 계산과 해석</summary><div><p><b>단일 제품 1:1:</b> 제품가격($/gal) × 42 − {benchmarkLabel}($/bbl).</p><p><b>복합 3:2:1:</b> [가솔린($/gal) × 42 × 2 + 경유($/gal) × 42 − {benchmarkLabel}($/bbl) × 3] ÷ 3. 원유 3배럴에서 가솔린 2배럴과 경유 1배럴이 나오는 경우의 원유 1배럴당 참고치입니다. 갤런 표시는 배럴 값을 42로 나눕니다.</p><p>이 화면은 EIA 개별 현물가격으로 계산한 뉴욕항 기준 참고치입니다. 거래소의 선물 스프레드나 EIA의 걸프만·LLS 예시와는 기준이 다릅니다. <a href="https://www.eia.gov/todayinenergy/includes/crackspread_explain.php" target="_blank" rel="noreferrer">EIA 계산 설명 ↗</a></p></div></details>
+      <CrackGuide/>
+      <details className="spread-method"><summary>계산식과 원자료 기준</summary><div><p><b>단일 제품 1:1:</b> 제품가격($/gal) × 42 − {benchmarkLabel}($/bbl).</p><p><b>복합 3:2:1:</b> [가솔린($/gal) × 42 × 2 + 경유($/gal) × 42 − {benchmarkLabel}($/bbl) × 3] ÷ 3. 원유 1배럴당 참고치이며 갤런 표시는 이 값을 42로 나눕니다.</p><p>이 화면은 EIA 개별 현물가격으로 계산한 뉴욕항 기준 참고치입니다. 거래소의 선물 스프레드나 EIA의 걸프만·LLS 예시와는 기준이 다릅니다. <a href="https://www.eia.gov/todayinenergy/includes/crackspread_explain.php" target="_blank" rel="noreferrer">EIA 계산 설명 ↗</a></p></div></details>
       <div className="method-note"><Info size={14}/><span>스프레드 확대는 제품가격이 원유보다 상대적으로 강해졌다는 뜻입니다. 정제 에너지·운영비 등은 차감하지 않아 정유사의 순이익과는 다릅니다. 음수도 그대로 표시하며, 0을 넘나드는 값의 비교는 등락률 대신 달러 차이로 표시합니다.</span></div>
     </section>
   </section>;
